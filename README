@@ -1,0 +1,61 @@
+password_handler is a utility I use for web passwords.  It might more
+accurately be called password_forgetter.  ("Ever dream of losing all your
+important passwords in one fell stroke?  Try this tool!")  It works like this:
+
+  - When you start password_handler, it prompts for the master password.
+  - If there is no recorded hash, the master password is confirmed, then
+    hashed with a random salt.  The salt and the hash are then saved.
+  - The given password is salted and hashed, and compared against a saved
+    hash.  (This safegaurds against some really ugly scenarios, but the truly
+    paranoid could hack the code to omit this check and never save a hash of
+    the master password.)
+  - Enter a site name or index number to obtain a pseudo-random password, 'l'
+    for a listing of recorded sites and their index numbers, or 'q' to quit.
+  - If the site name is new, the name of the site and and a random salt are
+    recorded.
+  - The master password, the site-specific salt, and the name of the site are
+    hashed together.
+  - The hash is abused in various ways to yield an eight character string
+    which should meet most web password requirements.
+  - The resulting password is copied to the clipboard (not echoed) ready to be
+    pasted into a login form.
+  - The program then loops, and waits for another site name.
+
+The program assumes an environment similar to that of the author, which is X11
+on Linux or similar.  Several command-line utilities are also required, but
+if it doesn't find them the program will complain and tell you what you need.
+
+Benefits:
+  - Your passwords are almost-randomly generated, so they should stand up well
+    to brute force.
+  - You don't have to remember all of these non-human-significant passwords.
+  - Passwords are never recorded, even encrypted.  They are hashed before
+    before being sent over the wire.  Even the hash is not recorded locally,
+    with the exception of the master password.  Only site names and salts are
+    recorded.
+  - The master password is salted before being hashed.  Even if someone gets a
+    copy of the hash (and salt, even), rainbow tables won't help.  There will
+    also be no benefit from parallelism if the attacker happens to gather
+    hashes from both you and the other one person who uses this program.
+  - Because the password is copied to the clipboard, it can be pasted into
+    anything, not just one browser.
+
+Drawbacks:
+  - Browsers' built-in password managers are more convenient, and have some of
+    the same master-password functionality, although passwords are stored with
+    symmetric encryption (if enabled).
+  - Because the password is copied to the clipboard, it can be pasted into
+    anything.  There are some obvious potential oopsies here.  (To reset a
+    compromised password, you can just delete its line in the site/salt file.
+    When you re-enter the site name, a new salt and hence new password will be
+    generated.  Don't do this without changing your password on the web site!)
+  - The passwords are only eight characters, and limited in scope of
+    characters.  The idea here is to make them as universally acceptable as
+    possible while acceptably strong.  This will not give you the strongest
+    possible password for every site.
+  - If you lose your site/salt file, you have lost all your passwords.  Back
+    it up locally in case you break it.  Back it up off-disk in case your
+    drive dies.  Back it up off-system in case it catches fire.  Back it up
+    off-site in case your burning computer lights your drapes.  You know.  The
+    usual.
+
