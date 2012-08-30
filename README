@@ -58,6 +58,10 @@ Requirements:
     xclip
     base64
 
+  Here's my output from 'ruby -v':
+    
+    ruby 1.8.7 (2012-06-29 patchlevel 370) [i686-linux]
+
   If you reasonably expect this program to work in your environment, but it
   doesn't, I'd like to hear about it.
 
