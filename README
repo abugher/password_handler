@@ -1,6 +1,20 @@
-password_handler is a utility I use for web passwords.  It works like this:
+password_handler is a utility I use to generate and reproduce web passwords.
 
-  - When you start password_handler, it prompts for the master password.
+Goals:
+
+  The purpose of this program is to generate and reproduce passwords which
+  meet as many web password requirements as possible, while still being
+  reasonably strong.  It is not to generate the strongest passwords possible.
+
+Password properties:
+
+  Each generated password is exactly eight mixed case alphanumeric characters.
+  There is a minimum of one lower case letter and one number.  There is always
+  exactly one capital letter.
+
+Operation:
+
+  - When you start the program, it prompts for the master password.
 
   - If there is no recorded hash, the master password is confirmed, then
     hashed with a random salt.  The salt and the hash are then saved.
@@ -10,11 +24,15 @@ password_handler is a utility I use for web passwords.  It works like this:
     paranoid could hack the code to omit this check and never save a hash of
     the master password.)
 
-  - Enter a site name or index number to obtain a pseudo-random password, 'l'
-    for a listing of recorded sites and their index numbers, or 'q' to quit.
+  - The program then enters a loop.  It is not required to enter the master
+    password again unless the program is restarted.
 
-  - If the site name is new, the name of the site and and a random salt are
-    recorded.
+  - The program prompts for input.  Enter a site name or index number to
+    obtain a password, 'l' for a listing of recorded sites and their index
+    numbers, or 'q' to quit.
+
+  - If the site name is new, the name of the site and and a pseudo-random salt
+    (from /dev/urandom) are recorded in the site list.
 
   - The master password, the site-specific salt, and the name of the site are
     hashed together.
@@ -25,18 +43,38 @@ password_handler is a utility I use for web passwords.  It works like this:
   - The resulting password is copied to the clipboard (not echoed) ready to be
     pasted into a login form.
 
-  - The program then loops, and waits for another site name.
+Requirements:
 
-The program assumes an environment similar to that of the author, which is X11
-on Linux or similar.  Several command-line utilities are also required, but
-if it doesn't find them the program will complain and tell you what you need.
+  The program assumes an environment similar to that of the author, which is
+  X11 on Linux or similar.  Several command-line utilities are also required,
+  but if it doesn't find them the program will complain and tell you what you
+  need.  As of this writing, the list of requirements includes:
+
+    stty
+    printf
+    dd
+    echo
+    sha512sum
+    xclip
+    base64
+
+  If you reasonably expect this program to work in your environment, but it
+  doesn't, I'd like to hear about it.
 
 Benefits:
 
-  - Your passwords are almost-randomly generated, so they should stand up well
-    to brute force.
+  - Your passwords are almost-randomly generated, so they should stand up
+    reasonably well to brute force.  They shouldn't ever be guessed on a site
+    with decent rate limiting.  
+  
+  - Without rate limiting, or if site's password hashes are leaked, eight
+    characters is unlikely to be sufficient to hold up under brute force.  (Of
+    course, if the passwords are stored in plain text and leaked, that's all
+    there is to it.)  However, since all the generated passwords are different,
+    one compromised password won't lead to the compromise of your other
+    accounts.
 
-  - You don't have to remember all of these non-human-significant passwords.
+  - You don't actually have to remember all of these almost-random passwords.
 
   - Passwords are never recorded, even encrypted.  They are hashed before
     before being sent over the wire.  Even the hash is not recorded locally,
@@ -46,7 +84,7 @@ Benefits:
   - The master password is salted before being hashed.  Even if someone gets a
     copy of the hash (and salt, even), rainbow tables won't help.  There will
     also be no benefit from parallelism if the attacker happens to gather
-    hashes from both you and the other one person who uses this program.
+    hashes from both you and the one other person who uses this program.
 
   - Because the password is copied to the clipboard, it can be pasted into
     anything, not just one browser.
